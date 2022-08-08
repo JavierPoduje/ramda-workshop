@@ -78,8 +78,16 @@ const myFunc5 = R.pipe(
   R.reduce(R.add, 0),
 );
 
+// compose funciona igual que pipe, excepto que la lectura de las funciones es inversa
+const withCompose = R.compose(
+  R.reduce(R.add, 0),
+  R.map(R.prop('hours')),
+  R.filter(R.prop('isOnline')),
+);
+
 console.log('approach declarativo: ', myFunc(instructorSessions));
 console.log('approach imperativo #1: ', myFunc2(instructorSessions));
 console.log('approach imperativo #2: ', myFunc3(instructorSessions));
 console.log('approach imperativo #3: ', myFunc4(instructorSessions));
 console.log('approach imperativo #4: ', myFunc5(instructorSessions));
+console.log('approach with compose: ', withCompose(instructorSessions));
