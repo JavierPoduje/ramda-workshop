@@ -1,12 +1,13 @@
 const R = require("ramda");
 
+const magnus = { name: "Magnus Carlsen", age: 31, elo: 2864 };
 const chessPlayersByCountry = [
   {
     name: "Noruega",
     continent: "Europe",
     players: [
       { name: "Magnus Carlsen", age: 31, elo: 2864 },
-      { name: "Jon Ludvig", age: 32, elo: 2639 },
+      { name: "Aryan Tari", age: 23, elo: 2672 },
     ],
   },
   {
@@ -40,3 +41,28 @@ const chessPlayersByCountry = [
 // 1. lensIndex
 // 2. lensProp
 // 2. lensPath
+
+const name = R.lensProp("name");
+const age = R.lensProp("age");
+
+console.log("name: ", R.view(name, magnus));
+console.log("set age: ", R.set(age, 32, magnus));
+console.log("over age: ", R.over(age, R.add(1), magnus));
+
+const first = R.lensIndex(0);
+const firstCountry = R.compose(first, name);
+
+console.log(
+  "first country through compose: ",
+  R.view(firstCountry, chessPlayersByCountry)
+);
+console.log(
+  "first country though lensPath: ",
+  R.view(R.lensPath([0, "name"]), chessPlayersByCountry)
+);
+console.log(
+  "set second chilean player elo: ",
+  R.set(R.lensPath([1, "players", 1, "elo"]), 2577, chessPlayersByCountry)[1]
+    .players
+);
+console.log("original chess players by country: ", chessPlayersByCountry[1].players);
