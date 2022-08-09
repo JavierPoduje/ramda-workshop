@@ -9,59 +9,49 @@ const instructorSessions = [
   { id: 6, hours: 6, isOnline: true, classroom: "Online" },
 ];
 
-// Tenemos una lista sesiones de un profesor:
-// queremos sumar la cantidad de horas que imparte sumando las horas de todas
-// sus sesiones online
+// Objetivo: sumar la cantidad de horas que imparte un profe en sus sesiones online
 
-// approach 1
-const myFunc = (instructorSessions) => {
-  // declaramos la variable donde almacenaremos nuestra suma de horas
+// approach 1: imperativa
+const imperative = (instructorSessions) => {
   let hours = 0;
-  // iteramos por las sesiones de los profes
   for (let i = 0; i < instructorSessions.length; i++) {
-    // filtramos las sesiones online
-    if (instructorSessions[i].isOnline) {
-      // sumamos la hora de la sesión a la suma de todas las sesiones
-      hours += instructorSessions[i].hours;
+    const session = instructorSessions[i];
+    if (session.isOnline) {
+      hours += session.hours;
     }
   }
   return hours;
 }
 
-// approach 2
-const myFunc2 = (instructorSessions) => {
-  // filtramos las sesiones online
+// approach 2: imperativa 2
+const imperative2 = (instructorSessions) => {
   const onlineSessions = instructorSessions.filter(session => session.isOnline);
-  // obtenemos las horas
   const hoursOfOnlineSessions = onlineSessions.map(session => session.hours);
-  // sumamos las horas
-  const sumOfHours = hoursOfOnlineSessions.reduce((sum, hour) => {
-    return sum + hour;
-  }, 0);
-
+  const sumOfHours = hoursOfOnlineSessions.reduce((sum, hour) => sum + hour, 0)
   return sumOfHours;
 }
 
-// approach 3
-const myFunc3 = (instructorSessions) => {
+// approach 3: imperative 2 con funciones ramda
+const imperativeWithRamda = (instructorSessions) => {
+  const onlineSessions = R.filter(session => session.isOnline, instructorSessions);
+  const hoursOfOnlineSessions = R.map(session => session.hours, onlineSessions);
+  const sumOfHours = R.reduce((sum, hour) => sum + hour, 0, hoursOfOnlineSessions);
+  return sumOfHours;
+};
+
+// approach 4: functional
+const functional1 = (instructorSessions) => {
   const sumOfHours = R.pipe(
-    // filtramos las sesiones online
     R.filter(session => session.isOnline),
-    // obtenemos las horas
     R.map(session => session.hours),
-    // sumamos las horas
     R.reduce((sum, hour) => sum + hour, 0),
   )(instructorSessions);
 
   return sumOfHours;
 }
 
-console.log('prop function:', R.prop('id', { id: 5, hola: 'chao' }));
-console.log('filter function:', R.filter(n => n >= 2, [1, 2, 3, 4]));
-console.log('reduce function:', R.reduce((acc, num) => acc * num, 1, [1, 2, 3, 4]));
-
-// approach 4
-const myFunc4 = (instructorSessions) => {
+// approach 5: functional 2
+const functional2 = (instructorSessions) => {
   const sumOfHours = R.pipe(
     R.filter(R.prop('isOnline')),
     R.map(R.prop('hours')),
@@ -71,23 +61,17 @@ const myFunc4 = (instructorSessions) => {
   return sumOfHours;
 }
 
-// approach 5
-const myFunc5 = R.pipe(
+// approach 6: functional 3 -> point free
+const functional3 = R.pipe(
   R.filter(R.prop('isOnline')),
   R.map(R.prop('hours')),
   R.reduce(R.add, 0),
 );
 
-// compose funciona igual que pipe, excepto que la lectura de las funciones es inversa
-const withCompose = R.compose(
-  R.reduce(R.add, 0),
-  R.map(R.prop('hours')),
-  R.filter(R.prop('isOnline')),
-);
+console.log('imperative result: ', imperative(instructorSessions));
+console.log('imperative 2 result: ', imperative2(instructorSessions));
+console.log('imperative with ramda: ', imperativeWithRamda(instructorSessions));
+console.log('funtional 1: ', functional1(instructorSessions));
+console.log('funtional 2: ', functional2(instructorSessions));
+console.log('funtional 3: ', functional3(instructorSessions));
 
-console.log('approach declarativo: ', myFunc(instructorSessions));
-console.log('approach imperativo #1: ', myFunc2(instructorSessions));
-console.log('approach imperativo #2: ', myFunc3(instructorSessions));
-console.log('approach imperativo #3: ', myFunc4(instructorSessions));
-console.log('approach imperativo #4: ', myFunc5(instructorSessions));
-console.log('approach with compose: ', withCompose(instructorSessions));
